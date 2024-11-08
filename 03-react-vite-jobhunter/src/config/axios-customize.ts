@@ -24,7 +24,9 @@ const handleRefreshToken = async (): Promise<string | null> => {
     return await mutex.runExclusive(async () => {
         const res = await instance.get<IBackendRes<AccessTokenResponse>>('/api/v1/auth/refresh');
         if (res && res.data) return res.data.access_token;
-        else return null;
+        else {
+            return null;
+        }
     });
 };
 
@@ -77,6 +79,11 @@ instance.interceptors.response.use(
                 description: error?.response?.data?.error ?? ""
             })
         }
+        // if ( error.response
+        //     && +error.response.status === 440) {
+        //         localStorage.removeItem("access_token");
+        //         window.location.href = "/login";
+        // }
 
         return error?.response?.data ?? Promise.reject(error);
     }

@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 import vn.it.jobhunter.domain.Company;
 import vn.it.jobhunter.domain.Job;
 import vn.it.jobhunter.domain.Skill;
-import vn.it.jobhunter.domain.response.ResCreateJobDTO;
-import vn.it.jobhunter.domain.response.ResCreateUserDTO;
 import vn.it.jobhunter.domain.response.ResultPaginationDTO;
+import vn.it.jobhunter.domain.response.job.ResCreateJobDTO;
+import vn.it.jobhunter.domain.response.job.ResUpdateJobDTO;
+import vn.it.jobhunter.domain.response.user.ResCreateUserDTO;
 import vn.it.jobhunter.repository.CompanyRepository;
 import vn.it.jobhunter.repository.JobRepository;
 import vn.it.jobhunter.repository.SkillRepository;
@@ -48,7 +49,7 @@ public class JobService {
         return this.convertToResCreateJobDTO(this.jobRepository.save(j));
     }
 
-    public Job handleUpdateJob(Job j, Job jobInDb) {
+    public ResUpdateJobDTO handleUpdateJob(Job j, Job jobInDb) {
         // check skills
         if (j.getSkills() != null) {
             List<Long> reqSkills = j.getSkills().stream()
@@ -70,8 +71,8 @@ public class JobService {
         jobInDb.setActive(j.isActive());
         jobInDb.setStartDate(j.getStartDate());
         jobInDb.setEndDate(j.getEndDate());
-
-        return this.jobRepository.save(jobInDb);
+        Job currj = this.jobRepository.save(jobInDb);
+        return convertToResUpdateJobDTO(currj);
     }
 
     public void handleDeleteJob(long id) {
@@ -100,7 +101,6 @@ public class JobService {
 
     public ResCreateJobDTO convertToResCreateJobDTO(Job job) {
         ResCreateJobDTO res = new ResCreateJobDTO();
-        ResCreateUserDTO.CompanyUser c = new ResCreateUserDTO.CompanyUser();
         res.setId(job.getId());
         res.setName(job.getName());
         res.setDescription(job.getDescription());
@@ -113,6 +113,27 @@ public class JobService {
         res.setEndDate(job.getEndDate());
         res.setCreatedAt(job.getCreatedAt());
         res.setCreatedBy(job.getCreatedBy());
+        if (job.getSkills() != null) {
+            res.setSkills(job.getSkills().stream()
+                    .map(x -> x.getName()).collect(Collectors.toList()));
+        }
+        return res;
+    }
+
+    public ResUpdateJobDTO convertToResUpdateJobDTO(Job job) {
+        ResUpdateJobDTO res = new ResUpdateJobDTO();
+        res.setId(job.getId());
+        res.setName(job.getName());
+        res.setDescription(job.getDescription());
+        res.setLevel(job.getLevel());
+        res.setLocation(job.getLocation());
+        res.setSalary(job.getSalary());
+        res.setQuantity(job.getQuantity());
+        res.setActive(job.isActive());
+        res.setStartDate(job.getStartDate());
+        res.setEndDate(job.getEndDate());
+        res.setUpdatedAt(job.getUpdatedAt());
+        res.setUpdatedBy(job.getUpdatedBy());
         if (job.getSkills() != null) {
             res.setSkills(job.getSkills().stream()
                     .map(x -> x.getName()).collect(Collectors.toList()));

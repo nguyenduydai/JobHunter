@@ -50,9 +50,9 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
+        // test
         List<String> listAuthority = new ArrayList<>();
         listAuthority.add("ROLE_USER_CREATE");
-        listAuthority.add("ROLE_USER_UPDATE");
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
@@ -75,11 +75,15 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
+        List<String> listAuthority = new ArrayList<>();
+        listAuthority.add("ROLE_USER_CREATE");
+
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
                 .claim("user", userInsideToken)
+                .claim("permission", listAuthority)
                 .build();
 
         JwsHeader jwsHeader = JwsHeader.with(JW_ALGORITHM).build();
@@ -114,9 +118,10 @@ public class SecurityUtil {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(getSecretKey())
                 .macAlgorithm(JW_ALGORITHM).build();
         try {
+            System.out.println(">>>>>>>>>>>>>>>>>>> Refresh token okkkkkkkkkkkkkk");
             return jwtDecoder.decode(token);
         } catch (Exception e) {
-            System.out.println("Refresh token error : " + e.getMessage());
+            System.out.println(">>>>>>>>>>>>>>>>>>> Refresh token error : " + e.getMessage());
             throw e;
         }
 

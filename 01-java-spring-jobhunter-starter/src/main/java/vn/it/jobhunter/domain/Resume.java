@@ -34,7 +34,7 @@ public class Resume {
     private String url;
 
     @Enumerated(EnumType.STRING)
-    private ResumeStateEnum state;
+    private ResumeStateEnum status;
 
     private String createdBy;
 

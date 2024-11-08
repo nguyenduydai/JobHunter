@@ -1,27 +1,6 @@
 package vn.it.jobhunter.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.Valid;
-import vn.it.jobhunter.domain.Company;
-import vn.it.jobhunter.domain.Job;
-import vn.it.jobhunter.domain.Permission;
-import vn.it.jobhunter.domain.Resume;
-import vn.it.jobhunter.domain.User;
-import vn.it.jobhunter.domain.response.ResResumeDTO;
-import vn.it.jobhunter.domain.response.ResultPaginationDTO;
-import vn.it.jobhunter.service.JobService;
-import vn.it.jobhunter.service.ResumeService;
-import vn.it.jobhunter.service.UserService;
-import vn.it.jobhunter.utils.SecurityUtil;
-import vn.it.jobhunter.utils.annotation.ApiMessage;
-import vn.it.jobhunter.utils.error.IdInvalidException;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -33,11 +12,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.turkraft.springfilter.boot.Filter;
 import com.turkraft.springfilter.builder.FilterBuilder;
 import com.turkraft.springfilter.converter.FilterSpecificationConverter;
 import com.turkraft.springfilter.parser.FilterParser;
+
+import jakarta.validation.Valid;
+import vn.it.jobhunter.domain.Resume;
+import vn.it.jobhunter.domain.response.ResultPaginationDTO;
+import vn.it.jobhunter.domain.response.resume.ResCreateResumeDTO;
+import vn.it.jobhunter.domain.response.resume.ResResumeDTO;
+import vn.it.jobhunter.domain.response.resume.ResUpdateResumeDTO;
+import vn.it.jobhunter.service.JobService;
+import vn.it.jobhunter.service.ResumeService;
+import vn.it.jobhunter.service.UserService;
+import vn.it.jobhunter.utils.annotation.ApiMessage;
+import vn.it.jobhunter.utils.error.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -61,7 +53,8 @@ public class ResumeController {
 
     @PostMapping("/resumes")
     @ApiMessage("create a Resume")
-    public ResponseEntity<Resume> createResume(@Valid @RequestBody Resume resume) throws IdInvalidException {
+    public ResponseEntity<ResCreateResumeDTO> createResume(@Valid @RequestBody Resume resume)
+            throws IdInvalidException {
         if (this.userService.fetchUserById(resume.getUser().getId()) == null ||
                 this.jobService.fetchJobById(resume.getJob().getId()) == null) {
             throw new IdInvalidException("user or Job not exists");
@@ -71,11 +64,12 @@ public class ResumeController {
 
     @PutMapping("/resumes")
     @ApiMessage("update Resume")
-    public ResponseEntity<Resume> updateResume(@RequestBody Resume postResume) throws IdInvalidException {
+    public ResponseEntity<ResUpdateResumeDTO> updateResume(@RequestBody Resume postResume) throws IdInvalidException {
         Resume currResume = this.resumeService.fetchResumeById(postResume.getId());
         if (currResume == null)
             throw new IdInvalidException("Resume id = " + postResume.getId() + "khong ton tai");
-        return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.handleUpdateResume(postResume));
+        currResume.setStatus(postResume.getStatus());
+        return ResponseEntity.status(HttpStatus.OK).body(this.resumeService.handleUpdateResume(currResume));
     }
 
     @DeleteMapping("/resumes/{id}")
@@ -90,9 +84,11 @@ public class ResumeController {
 
     @GetMapping("/resumes/{id}")
     @ApiMessage("fetch Resume by id")
-    public ResponseEntity<ResResumeDTO> getResumeById(@PathVariable("id") long id) {
-        Resume Resume = this.resumeService.fetchResumeById(id);
-        return ResponseEntity.ok(this.resumeService.convertToResResumeDTO(Resume));
+    public ResponseEntity<ResResumeDTO> getResumeById(@PathVariable("id") long id) throws IdInvalidException {
+        Resume resume = this.resumeService.fetchResumeById(id);
+        if (resume == null)
+            throw new IdInvalidException("Resume id = " + resume.getId() + "khong ton tai");
+        return ResponseEntity.ok(this.resumeService.convertToResResumeDTO(resume));
     }
 
     @GetMapping("/resumes")

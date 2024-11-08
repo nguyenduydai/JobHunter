@@ -15,6 +15,7 @@ public class ResLoginDTO {
     private String accessToken;
     private UserLogin user;
     private UserInsideToken userInsideToken;
+    private UserGetAccount userGetAccount;
 
     @Getter
     @Setter

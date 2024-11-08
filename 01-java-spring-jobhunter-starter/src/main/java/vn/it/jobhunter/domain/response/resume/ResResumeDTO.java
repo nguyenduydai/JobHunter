@@ -1,4 +1,4 @@
-package vn.it.jobhunter.domain.response;
+package vn.it.jobhunter.domain.response.resume;
 
 import java.time.Instant;
 
@@ -16,7 +16,7 @@ public class ResResumeDTO {
     private long id;
     private String email;
     private String url;
-    private ResumeStateEnum state;
+    private ResumeStateEnum status;
     private String createdBy;
 
     private String updatedBy;

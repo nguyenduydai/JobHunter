@@ -20,9 +20,11 @@ import vn.it.jobhunter.domain.Company;
 import vn.it.jobhunter.domain.Job;
 import vn.it.jobhunter.domain.Resume;
 import vn.it.jobhunter.domain.User;
-import vn.it.jobhunter.domain.response.ResCreateUserDTO;
-import vn.it.jobhunter.domain.response.ResResumeDTO;
 import vn.it.jobhunter.domain.response.ResultPaginationDTO;
+import vn.it.jobhunter.domain.response.resume.ResCreateResumeDTO;
+import vn.it.jobhunter.domain.response.resume.ResResumeDTO;
+import vn.it.jobhunter.domain.response.resume.ResUpdateResumeDTO;
+import vn.it.jobhunter.domain.response.user.ResCreateUserDTO;
 import vn.it.jobhunter.repository.ResumeRepository;
 import vn.it.jobhunter.utils.SecurityUtil;
 
@@ -45,18 +47,21 @@ public class ResumeService {
         this.userService = userService;
     }
 
-    public Resume handleCreateResume(Resume r) {
-        User u = this.userService.fetchUserById(r.getUser().getId());
-        Job j = this.jobService.fetchJobById(r.getJob().getId());
-        r.setJob(j);
-        r.setUser(u);
-        return this.resumeRepository.save(r);
+    public ResCreateResumeDTO handleCreateResume(Resume r) {
+        r = this.resumeRepository.save(r);
+        ResCreateResumeDTO res = new ResCreateResumeDTO();
+        res.setId(r.getId());
+        res.setCreatedAt(r.getCreatedAt());
+        res.setCreatedBy(r.getCreatedBy());
+        return res;
     }
 
-    public Resume handleUpdateResume(Resume r) {
-        Resume resume = this.fetchResumeById(r.getId());
-        resume.setState(r.getState());
-        return this.resumeRepository.save(resume);
+    public ResUpdateResumeDTO handleUpdateResume(Resume r) {
+        r = this.resumeRepository.save(r);
+        ResUpdateResumeDTO res = new ResUpdateResumeDTO();
+        res.setUpdatedAt(r.getUpdatedAt());
+        res.setUpdatedBy(r.getUpdatedBy());
+        return res;
     }
 
     public void handleDeleteResume(long id) {
@@ -81,7 +86,7 @@ public class ResumeService {
         } else {
             if (currUser != null) {
                 Company userCompany = currUser.getCompany();
-                if (currUser != null) {
+                if (userCompany != null) {
                     List<Job> companyJobs = userCompany.getJobs();
                     if (companyJobs != null && companyJobs.size() > 0) {
                         arrJobIds = companyJobs.stream().map(i -> i.getId()).collect(Collectors.toList());
@@ -130,19 +135,15 @@ public class ResumeService {
         res.setId(resume.getId());
         res.setEmail(resume.getEmail());
         res.setUrl(resume.getUrl());
-        res.setState(resume.getState());
+        res.setStatus(resume.getStatus());
         res.setCreatedAt(resume.getCreatedAt());
         res.setCreatedBy(resume.getCreatedBy());
         res.setUpdatedAt(resume.getUpdatedAt());
         res.setUpdatedBy(resume.getUpdatedBy());
         if (resume.getJob() != null) {
-            res.setCompanyName(resume.getJob().getCompany().getName());
-        }
-        if (resume.getJob() != null) {
             jr.setId(resume.getJob().getId());
             jr.setName(resume.getJob().getName());
             res.setJobResume(jr);
-
             res.setCompanyName(resume.getJob().getCompany().getName());
         }
         if (resume.getUser() != null) {
@@ -150,7 +151,6 @@ public class ResumeService {
             ur.setName(resume.getUser().getName());
             res.setUserResume(ur);
         }
-        res.setJobResume(jr);
         return res;
     }
 

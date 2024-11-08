@@ -4,8 +4,9 @@ package vn.it.jobhunter.controller;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import vn.it.jobhunter.domain.Job;
-import vn.it.jobhunter.domain.response.ResCreateJobDTO;
 import vn.it.jobhunter.domain.response.ResultPaginationDTO;
+import vn.it.jobhunter.domain.response.job.ResCreateJobDTO;
+import vn.it.jobhunter.domain.response.job.ResUpdateJobDTO;
 import vn.it.jobhunter.service.JobService;
 import vn.it.jobhunter.utils.annotation.ApiMessage;
 import vn.it.jobhunter.utils.error.IdInvalidException;
@@ -39,7 +40,7 @@ public class JobController {
 
     @PutMapping("/jobs")
     @ApiMessage("update a job")
-    public ResponseEntity<Job> updateJob(@Valid @RequestBody Job postJob) throws IdInvalidException {
+    public ResponseEntity<ResUpdateJobDTO> updateJob(@Valid @RequestBody Job postJob) throws IdInvalidException {
         Job currJob = this.jobService.fetchJobById(postJob.getId());
         if (currJob == null)
             throw new IdInvalidException("Job id = " + postJob.getId() + "khong ton tai");

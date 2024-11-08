@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import vn.it.jobhunter.domain.Company;
 import vn.it.jobhunter.domain.Role;
 import vn.it.jobhunter.domain.User;
-import vn.it.jobhunter.domain.response.ResCreateUserDTO;
-import vn.it.jobhunter.domain.response.ResUpdateUserDTO;
-import vn.it.jobhunter.domain.response.ResUserDTO;
 import vn.it.jobhunter.domain.response.ResultPaginationDTO;
+import vn.it.jobhunter.domain.response.user.ResCreateUserDTO;
+import vn.it.jobhunter.domain.response.user.ResUpdateUserDTO;
+import vn.it.jobhunter.domain.response.user.ResUserDTO;
 import vn.it.jobhunter.repository.UserRepository;
 import java.util.stream.Collectors;
 

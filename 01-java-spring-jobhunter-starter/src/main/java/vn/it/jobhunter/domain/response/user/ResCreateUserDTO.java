@@ -1,4 +1,4 @@
-package vn.it.jobhunter.domain.response;
+package vn.it.jobhunter.domain.response.user;
 
 import java.time.Instant;
 
@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.it.jobhunter.domain.response.ResUserDTO.CompanyUser;
+import vn.it.jobhunter.domain.response.user.ResUserDTO.CompanyUser;
 import vn.it.jobhunter.utils.constant.GenderEnum;
 
 @AllArgsConstructor

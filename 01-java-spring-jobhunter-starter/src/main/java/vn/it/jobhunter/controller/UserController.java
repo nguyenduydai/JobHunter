@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import vn.it.jobhunter.domain.User;
-import vn.it.jobhunter.domain.response.ResCreateUserDTO;
-import vn.it.jobhunter.domain.response.ResUpdateUserDTO;
-import vn.it.jobhunter.domain.response.ResUserDTO;
 import vn.it.jobhunter.domain.response.ResultPaginationDTO;
+import vn.it.jobhunter.domain.response.user.ResCreateUserDTO;
+import vn.it.jobhunter.domain.response.user.ResUpdateUserDTO;
+import vn.it.jobhunter.domain.response.user.ResUserDTO;
 import vn.it.jobhunter.service.UserService;
 import vn.it.jobhunter.utils.annotation.ApiMessage;
 import vn.it.jobhunter.utils.error.IdInvalidException;
@@ -62,8 +62,6 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     @ApiMessage("delete a user")
     public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
-        if (id > 1500)
-            throw new IdInvalidException(" loi id lon hon 1500 ");
         User currUser = this.userService.fetchUserById(id);
         if (currUser == null) {
             throw new IdInvalidException("User voi id " + id + " khong ton tai");
